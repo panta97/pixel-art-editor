@@ -122,7 +122,20 @@ class PixelEditor {
     this.controls = controls.map((Control) => new Control(state, config));
     this.dom = elt(
       "div",
-      {},
+      {
+        tabIndex: 0,
+        onkeydown: (e) => {
+          e.preventDefault();
+          for (let t in tools) {
+            if (t.substring(0,1) === e.key)
+              dispatch({tool: t});
+          }
+
+          if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
+            dispatch({undo: true})
+          }
+        },
+      },
       this.canvas.dom,
       elt("br"),
       ...this.controls.reduce((a, c) => a.concat(" ", c.dom), [])
